@@ -9,46 +9,33 @@ use strict;
 use File::Find;
 use File::Copy qw(move);
 
-my (@flacs);
-my (@dirs) = ( "C:\\Mine\\Music\\Vinyl",
-	       		"F:\\Mine\\Temp" );
-my ($txtfile) = "setlist.txt";
+my @titles = ();
+my @flacs = ();
+my @dirs = ( "C:\\Mine\\Music\\Vinyl",
+			 "F:\\Mine\\Temp" );
+my $txtfile = "setlist.txt";
 
-main ();
+my $drive = 0;
+foreach my $arg (@ARGV) {
+	$drive = 1 if $arg eq "-f";
+}
 
-sub main {
-	my (@sorted,@presorted,$drive,$fh);
-	my ($title,$flacfile,$junk);
-	my ($line, $count, @titles);
-	my ($newfilename, $filetype, $i);
+chdir $dirs[$drive] or die "\n\n Unable to find folder !!!";
 
-	$drive = 0;
-	foreach my $arg (@ARGV) {
-#		if ($arg eq "help") {
-#			help ();
-#			exit (0);
-#		} else {
-			$drive = 1 if $arg eq "-f";
-#		}
-	}
+find ( sub { push @flacs, $_ if $_ =~ /.flac$/ }, $ARGV[0] );
 
-	chdir $dirs[$drive] or die "\n\n Unable to find folder !!!";
+chdir $ARGV[0] or die "can't change directory";
 
-	find ( sub { push @flacs, $_ if $_ =~ /.flac$/ }, $ARGV[0] );
+open my $fh, "$txtfile" or die "Can't find $txtfile";
+while ($line = <$fh>) {
+	chomp ($line);
+	push @titles, $line;
+}
 
-	chdir $ARGV[0] or die "can't change directory";
-
-	open (FILE,"$txtfile") or die "Can't find $txtfile";
-	while ($line = <FILE>) {
-		chomp ($line);
-		push @titles, $line;
-	}
-
-	@presorted = sort @flacs;
-	for ($i = 0;$i <= $#presorted; $i++) {
-		($title, $filetype) = split ('\.',$presorted [$i]);
-		$newfilename = sprintf ("%02d %s.%s", $i+1, $titles[$i], $filetype);
-		move $presorted [$i], $newfilename;
-		print "\n".$presorted [$i], " renamed to ".$newfilename."\n";
-	}
+my @sorted = sort @flacs;
+for ($i = 0;$i <= $#sorted; $i++) {
+	my ($title, $filetype) = split ('\.',$sorted [$i]);
+	my $newfilename = sprintf ("%02d %s.%s", $i+1, $titles[$i], $filetype);
+	move $sorted [$i], $newfilename;
+	print "\n".$sorted [$i], " renamed to ".$newfilename."\n";
 }

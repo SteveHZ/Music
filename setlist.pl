@@ -15,15 +15,17 @@ my $txtfile = "setlist.txt";
 main ();
 
 sub main {
-	my (@sorted, @presorted, $fh);
+	my @sorted = ();
 	my ($title, $flacfile, $junk);
 
 	my $dir = prompt ("Directory (c:/mine/music/) ".":");
 	my $path = "c:/mine/music/".$dir;
-	chdir ($path) or die "\nUnable to find folder $path";
+	chdir $path or die "\nUnable to find folder $path";
 
-	find ( sub { push @flacs, $_ if $_ =~ /.flac$/	}, $path);
-	@presorted = sort @flacs;
+	find ( sub {
+		 push @flacs, $_ if $_ =~ /.flac$/
+	 }, $path);
+	my @presorted = sort @flacs;
 	for (@presorted) {
 		($junk, $flacfile) = split (/\d /, $_);
 		($title, $junk) = split ('\.', $flacfile);
@@ -32,15 +34,15 @@ sub main {
 
 # Write to disc
 
-	open ($fh, '>', $txtfile) or die "\n\n Can't open new setlist file !!!";
+	open my $fh, '>', $txtfile or die "\n\n Can't open new setlist file !!!";
 	write_text_file ($fh, \@sorted);
 	close $fh;
 
 # Write to screen
 
-	open ($fh, '>-'); # opens STDOUT
-	write_text_file ($fh, \@sorted);
-	close $fh;
+	open my $outh, '>-'; # opens STDOUT
+	write_text_file ($outh, \@sorted);
+	close $outh;
 	print "\n\nText file completed.\n";
 }
 

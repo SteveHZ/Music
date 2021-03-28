@@ -30,8 +30,6 @@ find ( sub {
 }, $path );
 
 my @sorted = sort @wavs;
-print "\n$_" for @sorted;
-print "\n\n\n";
 
 # Write to disc
 
@@ -80,7 +78,7 @@ sub write_cue_file {
 
 =head1 SYNOPSIS
 
- perl makecue.pl 
+ perl makecue.pl
 
 =head1 DESCRIPTION
 

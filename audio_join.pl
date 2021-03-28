@@ -27,7 +27,7 @@ unlink $files_list;
 
 sub build_file_list {
 	my ($in_path, $files_list) = @_;
-	chdir ($in_path) or die "\nUnable to find folder $in_path";
+	chdir $in_path or die "\nUnable to find folder $in_path";
 
 	my @flacs = ();
 	find ( sub {
