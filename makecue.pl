@@ -33,7 +33,7 @@ my @sorted = sort @wavs;
 
 # Write to disc
 
-open my $fh,'>', $cuefile or die "\n\n Can't open new cue file !!!";
+open my $fh, '>', $cuefile or die "\n\n Can't open new cue file !!!";
 write_cue_file ($fh, \@sorted);
 close $fh;
 
@@ -60,11 +60,11 @@ sub write_cue_file {
 		}
 		$str = sprintf "  TRACK %02d AUDIO", ++$filenum;
 		print $fh "\n$str";
-		if (($pregap) && ($filenum > 1)) {
+		if ($pregap && ($filenum > 1)) {
 			print $fh "\n  PREGAP 00:02:00";
 		}
 		print $fh "\n  INDEX 01 00:00:00";
-		if (($postgap) && ($filenum < $files)) {
+		if ($postgap && ($filenum < $files)) {
 			print $fh "\n  POSTGAP 00:02:00";
 		}
 	}

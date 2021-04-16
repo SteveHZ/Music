@@ -7,7 +7,7 @@ use MyLib qw(prompt);
 use File::Copy qw(move);
 
 my $dir = prompt ("Directory (C:/Mine/Music/Vinyl/) ",":");
-my $path = "C:/Mine/Music/Vinyl/".$dir;
+my $path = "C:/Mine/Music/Vinyl/$dir";
 
 opendir my $dh, $path or die "Couldn't open $path : $!\n";
 my @files = readdir $dh;

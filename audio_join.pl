@@ -57,11 +57,11 @@ sub write_file_list {
 
 =head1 NAME
 
-audio_join.pl
+ audio_join.pl
 
 =head1 SYNOPSIS
 
- audio_join.pl input_folder output_folder/filename.wav
+ perl audio_join.pl input_folder output_folder/filename.wav
 
  Arguments :
 
