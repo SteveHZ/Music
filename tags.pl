@@ -12,31 +12,23 @@ use File::Find;
 use Audio::FLAC::Header;
 use MP3::Tag;
 
-main ();
+my $dispatch = {
+	flac => sub { update_flac_tags (@_) },
+	mp3	 => sub { update_mp3_tags  (@_) },
+};
 
-sub main {
-	my $dispatch = {
-		flac => sub { update_flac_tags (@_) },
-		mp3	 => sub { update_mp3_tags  (@_) },
-	};
+my $filetype = get_filetype ();
+my $dir = get_directory ();
+my $path = "c:/mine/music/".$dir;
+chdir $path or die "\nUnable to find folder '$path'";
 
-	my $filetype = get_filetype ();
-	my $dir = get_directory ();
-	my $path = "c:/mine/music/".$dir;
-	chdir ($path) or die "\nUnable to find folder '$path'";
+my $sorted = get_files ($path, $filetype);
+print "\n$_" for @sorted;
 
-	my @files = ();
-	find ( sub {
-		push @files, $_ if $_ =~ /\.$filetype$/
-	}, $path);
-	my @sorted = sort @files;
-	print "\n$_" for @sorted;
+my $info = get_info ();
 
-	my $info = get_info ();
-
-	$dispatch->{$filetype}->(\@sorted, $info);
-	print "\n";
-}
+$dispatch->{$filetype}->($sorted, $info);
+print "\n";
 
 sub get_filetype {
 	while (1) {
@@ -47,6 +39,15 @@ sub get_filetype {
 
 sub get_directory {
 	return prompt ('Directory (c:/mine/music/) ',':');
+}
+
+sub get_files {
+	my ($path, $filetype) = @_;
+	my @files = ();
+	find ( sub {
+		push @files, $_ if $_ =~ /\.$filetype$/
+	}, $path);
+	return [ sort @files ];
 }
 
 sub get_info {

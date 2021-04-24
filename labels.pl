@@ -12,7 +12,7 @@ my $dir = get_directory ($base_path);
 my $album_title = get_last_dir ($dir);
 
 my $path = $base_path.$dir;
-chdir ($path) or die "\nUnable to find folder '$path'";
+chdir $path or die "\nUnable to find folder '$path'";
 
 my $files = get_files ($path);
 my $info = get_info ($path, $files);
@@ -46,9 +46,11 @@ sub get_info {
 	for my $song (@$files) {
 		my $flac = Audio::FLAC::Header->new ("$path/$song");
 		my $tags = $flac->tags ();
-
+		my $track_no = ($tags->{TRACKNUMBER} < 10)  ? sprintf "%02d", $tags->{TRACKNUMBER}
+													: $tags->{TRACKNUMBER};
+												  
 		push @tracks, {
-			track => "$tags->{TRACKNUMBER} $tags->{title}",
+			title => "$track_no $tags->{title}",
 			length => $flac->{trackTotalLengthSeconds},
 		};
 	}
@@ -57,16 +59,16 @@ sub get_info {
 
 sub write_file {
 	my ($album_title, $info) = @_;
-	my $labels_dir = "c:/mine/music/waves/projects/labels";
+	my $labels_dir = "c:/mine/music/waves/labels";
 	my $time = 0;
 	
 	print "\nWriting $labels_dir/$album_title.txt\n\n";
 
 	open my $fh, '>', "$labels_dir/$album_title.txt";
 	for my $song (@$info) {
-		my $secs = sprintf ("%.6f", $time);
-		my $line = "$secs\t$secs\t$song->{track}";
-		
+		my $secs = sprintf "%.6f", $time;
+		my $line = "$secs\t$secs\t$song->{title}";
+
 		print "$line\n";
 		print $fh "$line\n";
 		$time += $song->{length};
