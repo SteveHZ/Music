@@ -63,7 +63,6 @@ sub write_file {
 	my $time = 0;
 	
 	print "\nWriting $labels_dir/$album_title.txt\n\n";
-
 	open my $fh, '>', "$labels_dir/$album_title.txt";
 	for my $song (@$info) {
 		my $secs = sprintf "%.6f", $time;
