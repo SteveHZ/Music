@@ -7,7 +7,6 @@ use warnings;
 
 use MyLib qw(prompt);
 use File::Find;
-use File::Copy qw(move);
 
 die "Usage : perl audio_join.pl input_folder output_folder/file.wav"
 	if @ARGV != 2;
@@ -15,8 +14,7 @@ die "Usage : perl audio_join.pl input_folder output_folder/file.wav"
 my $in_path = $ARGV[0];
 my $out_file = $ARGV[1];
 
-my $out_path = $out_file;
-$out_path =~ s/^(.+)\/\w+\.wav/$1/; # strip trailing /filename.wav
+my $out_path = get_parent_dir ($out_file);
 mkdir $out_path unless -e $out_path;
 
 my $files_list = "$in_path/files_list.txt";
@@ -51,6 +49,14 @@ sub write_file_list {
 		print $fh "file '$file'\n";
 	}
 	close $fh;
+}
+
+sub get_parent_dir {
+	my $filename = shift;
+	$filename =~ s/^(.+)
+				\/\w+\.wav
+				/$1/x; # strip trailing /filename.wav
+	return $filename;
 }
 
 =pod

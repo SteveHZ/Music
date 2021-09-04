@@ -6,11 +6,11 @@ use warnings;
 use MyLib qw(prompt);
 use File::Find;
 use Audio::FLAC::Header;
-use Path::Tiny;
+use Path::Tiny; # path
 
 my $base_path = "c:/mine/music/vinyl/";
 my $dir = get_directory ($base_path);
-my $album_title = path ($dir)-> basename;
+my $album_title = path ($dir)->basename;
 
 my $path = $base_path.$dir;
 chdir $path or die "\nUnable to find folder '$path'";
@@ -67,20 +67,6 @@ sub write_file {
 	}
 	close $fh;	
 }
-
-=begin comment
-
-my $album_title = get_parent_dir ($dir);
-sub get_parent_dir {
-	my ($path, $n) = @_;
-	$n //= 1;
-	my @dirs = split '/', $path;
-	return (@dirs > 1) ? $dirs [@dirs - $n]
-					   : '/';
-}
-
-=end comment
-=cut
 
 =pod
 
