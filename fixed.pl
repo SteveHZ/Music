@@ -13,20 +13,20 @@ opendir my $dh, $path or die "Couldn't open $path : $!\n";
 my @files = readdir $dh;
 close $dh;
 
-my @remove_files = ();
-my @keep_files = ();
+my @files_to_remove = ();
+my @files_to_keep = ();
 my $ext = "flac";
 
 for my $file (@files) {
 	if ($file =~ /.*fixed\.$ext/) {
-		push @keep_files, $file;
+		push @files_to_keep, $file;
 	} elsif ($file =~ /.*\.$ext/) {
-		push @remove_files, $file;
+		push @files_to_remove, $file;
 	}
 }
 
-unlink "$path/$_" for @remove_files;
-for my $file (@keep_files) {
+unlink "$path/$_" for @files_to_remove;
+for my $file (@files_to_keep) {
 	my $new_name = $file;
 	$new_name =~ s/-fixed//;
 	print "\nWriting $path/$new_name...";
