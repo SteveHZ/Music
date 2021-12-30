@@ -1,20 +1,16 @@
 # hyp.pl 17/11/21, 30/11/21, 5/12/21
 
-# Read Hypnagogue podcast playlist from soundcloud.com to turn it
+# Read Hypnagogue podcast playlist from hypnagogue.com to turn it
 # into a cue file which can be read in foobar and poweramp
 
 use strict;
 use warnings;
 use MyLib qw(read_file prompt);
+
 my $path = "C:/Mine/Music/Podcasts/Hypnagogue";
 chdir $path or die "\nUnable to find folder $path";
 
-my $episode;
-if (defined $ARGV[0]) {
-	$episode = $ARGV[0];
-} else {
-	$episode = prompt ("Episode number ",":");
-}
+my $episode = $ARGV[0] // prompt ("Episode number ",":");
 die "Can't find Hypnagogue $episode text file !!"
 	unless -e "$path/Hypnagogue $episode.txt";
 
@@ -25,7 +21,7 @@ my $lines = read_file "$path/Hypnagogue $episode.txt";
 my @tracks = ();
 
 for my $line (@$lines) {
-	my ($time, $info) = split ' ', $line, 2;
+	my ($time, $info) = split ' ', $line, 2; # split only once (produce two fields)
 	chomp $info;
 
 	push @tracks, {
@@ -90,7 +86,7 @@ sub write_cue_file {
  
 =head1 DESCRIPTION
 
- Create a cue file from a text file copied from Sequences Souncloud webpage
+ Create a cue file from a text file copied from Hypnagogue webpage
  
 =head1 AUTHOR
 
