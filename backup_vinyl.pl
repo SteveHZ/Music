@@ -18,17 +18,14 @@ sub check_tags {
 	&& $src_tags->{genre} eq $dest_tags->{genre};
 }
 
-sub get_genre {
+sub get_flac_genre {
 	my $tags = shift;
-	if (defined $tags->{GENRE}) {
-		my $type = reftype ($tags->{GENRE});
-		if (defined $type && $type eq 'ARRAY') {
-			return join (';', $tags->{GENRE}->@*);
-		} else {
-			return $tags->{GENRE};
-		}
+	return "" unless defined $tags->{GENRE};
+	my $type = reftype ($tags->{GENRE});
+	if (defined $type && $type eq 'ARRAY') {
+		return join (';', $tags->{GENRE}->@*);
 	} else {
-		return "";
+		return $tags->{GENRE};
 	}
 }
 
@@ -36,13 +33,12 @@ sub get_flac_tags {
 	my $filename = shift;
 	my $flac = Audio::FLAC::Header->new ($filename);
 	my $tags = $flac->tags ();
-	my $genre = get_genre ($tags);
 
 	return {
 		title => $tags->{title} // "",
 		artist => $tags->{ARTIST} // "",
 		album => $tags->{ALBUM} // "",
-		genre => $genre,
+		genre => get_flac_genre ($tags),
 	};
 }
 
@@ -136,40 +132,25 @@ sub dir_walk {
 	}
 }
 
+=begin comment
+my @src_dirs = ("C://Mine/Music/Vinyl", "C://Mine/Music/Bandcamp");
 
-#my @src_dirs = ("C://Mine/Music/Vinyl", "C://Mine/Music/Bandcamp");
+for my $src_dir (@src_dirs) {
+	opendir my $dh, $src_dir or die "Can't open directory $src_dir: $!";
+	dir_walk ($coderef, $src_dir);
+}
+print "\n";
+=end comment
+=cut
 
-#for my $src_dir (@src_dirs) {
-#	opendir my $dh, $src_dir or die "Can't open directory $src_dir: $!";
-#	dir_walk ($coderef, $src_dir);
-#}
-#print "\n";
-
+#=begin comment
 my $src_folder = "C://Mine/Music/Vinyl";
 die "Please supply directory folder or band name" unless @ARGV == 1;
 my $dir = $ARGV[0];
 my $folder = "$src_folder/$dir";
 dir_walk ($coderef, $folder);
-
-
-
-#my $src_folder = "C://Mine/Music/Bandcamp";
-#my $dest_folder = "F://Mine/Bandcamp";
-#my $src_folder = "C://Mine/Music/Vinyl";
-#my $dest_folder = "F://Mine/Vinyl";
-#my @bands = ("AC-DC", "Al Di Meola");
-#my @bands = ("Coheed and Cambria");
-
-#opendir my $dh, $src_folder or die "Can't open directory $src_folder: $!";
-#my @dirs = readdir $dh;
-
-#die "Please supply directory folder or band name" unless @ARGV == 1;
-#my $dir = $ARGV[0];
-#for my $dir (@bands) {
-#for my $dir (@dirs) {
-#	my $folder = "$src_folder/$dir";
-#	dir_walk ($coderef, $folder);
-#}
+#=end comment
+#=cut
 
 =pod
 
