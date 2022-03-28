@@ -6,8 +6,8 @@ use warnings;
 use Audio::FLAC::Header;
 use MP3::Tag;
 use Path::Tiny; # path
+use File::Copy; # copy
 use Scalar::Util qw(reftype);
-use File::Copy;
 
 sub check_tags {
 	my ($src_tags, $dest_tags) = @_;
@@ -58,12 +58,13 @@ sub get_mp3_tags {
 sub print_tags {
 	my $tags = shift;
 
-	print "\nTitle : $tags->{title}";
+	print "\nTitle  : $tags->{title}";
 	print "\nArtist : $tags->{artist}";
-	print "\nAlbum : $tags->{album}";
-	print "\nGenre : $tags->{genre}";
+	print "\nAlbum  : $tags->{album}";
+	print "\nGenre  : $tags->{genre}";
 }
 
+=begin comment
 sub compare {
 	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
 	my $dest_tags;
@@ -71,9 +72,30 @@ sub compare {
 	my $src_tags = $tags_fn->("$source_dir/$file");
 	if (-e "$dest_dir/$file") {
 		$dest_tags = $tags_fn->("$dest_dir/$file");
+		if (check_tags ($src_tags, $dest_tags)) {
+			print "\nOK : $source_dir/$file";
+			return 0;
+		} else {
+			print "\nFAIL : $source_dir/$file";
+			return 1;
+		}
 	} else {
-		print "\n**ERROR** Unable to find $dest_dir/$file"
+		print "\n**ERROR** Unable to find $dest_dir/$file";
+		return 0;
 	}
+}
+=end comment
+=cut
+
+sub compare {
+	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
+	
+	unless (-e "$dest_dir/$file") {
+		print "\n**ERROR** Unable to find $dest_dir/$file";
+		return 0;
+	}
+	my $src_tags = $tags_fn->("$source_dir/$file");
+	my $dest_tags = $tags_fn->("$dest_dir/$file");
 	if (check_tags ($src_tags, $dest_tags)) {
 		print "\nOK : $source_dir/$file";
 		return 0;
@@ -126,29 +148,22 @@ sub dir_walk {
 			return;
 		}
 		while ($file = readdir $dh) {
-			next if $file =~ /^\./;
+ 			next if $file =~ /^\./;
 			dir_walk ($code, "$top/$file");
 		}
 	}
 }
 
-=begin comment
-my @src_dirs = ("C://Mine/Music/Vinyl", "C://Mine/Music/Bandcamp");
-
-for my $src_dir (@src_dirs) {
-	opendir my $dh, $src_dir or die "Can't open directory $src_dir: $!";
-	dir_walk ($coderef, $src_dir);
-}
-print "\n";
-=end comment
-=cut
-
 #=begin comment
+
 my $src_folder = "C://Mine/Music/Vinyl";
+#my $src_folder = "C://Mine/Music/Bandcamp";
 die "Please supply directory folder or band name" unless @ARGV == 1;
+
 my $dir = $ARGV[0];
 my $folder = "$src_folder/$dir";
 dir_walk ($coderef, $folder);
+
 #=end comment
 #=cut
 
