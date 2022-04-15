@@ -1,4 +1,4 @@
-# backup_vinyl.pl 27-30/12/21
+# backup_tags.pl 27-30/12/21
 
 use strict;
 use warnings;
@@ -8,24 +8,26 @@ use MP3::Tag;
 use Path::Tiny; # path
 use File::Copy; # copy
 use Scalar::Util qw(reftype);
+#use Data::Dumper;
 
 sub check_tags {
 	my ($src_tags, $dest_tags) = @_;
 
 	return $src_tags->{title} eq $dest_tags->{title}
-	&& $src_tags->{artist} eq $dest_tags->{artist}
 	&& $src_tags->{album} eq $dest_tags->{album}
+	&& $src_tags->{album_artist} eq $dest_tags->{album_artist}
+	&& $src_tags->{artist} eq $dest_tags->{artist}
 	&& $src_tags->{genre} eq $dest_tags->{genre};
 }
 
-sub get_flac_genre {
-	my $tags = shift;
-	return "" unless defined $tags->{GENRE};
-	my $type = reftype ($tags->{GENRE});
+sub get_flac_tag_arrays {
+	my ($tags, $tag) = @_;
+	return "" unless defined $tags->{$tag};
+	my $type = reftype ($tags->{$tag});
 	if (defined $type && $type eq 'ARRAY') {
-		return join (';', $tags->{GENRE}->@*);
+		return join (';', $tags->{$tag}->@*);
 	} else {
-		return $tags->{GENRE};
+		return $tags->{$tag};
 	}
 }
 
@@ -36,9 +38,10 @@ sub get_flac_tags {
 
 	return {
 		title => $tags->{title} // "",
-		artist => $tags->{ARTIST} // "",
 		album => $tags->{ALBUM} // "",
-		genre => get_flac_genre ($tags),
+		album_artist => $tags->{ALBUMARTIST} // "",
+		artist => get_flac_tag_arrays ($tags, "ARTIST"),
+		genre => get_flac_tag_arrays ($tags, "GENRE"),
 	};
 }
 
@@ -49,8 +52,9 @@ sub get_mp3_tags {
 
 	return {
 		title => $tags->{song} // "",
-		artist => $tags->{artist} // "",
 		album => $tags->{album} // "",
+		album_artist => $tags->{album_artist} // "",
+		artist => $tags->{artist} // "",
 		genre => $tags->{genre} // "",
 	};
 }
@@ -58,34 +62,12 @@ sub get_mp3_tags {
 sub print_tags {
 	my $tags = shift;
 
-	print "\nTitle  : $tags->{title}";
-	print "\nArtist : $tags->{artist}";
-	print "\nAlbum  : $tags->{album}";
-	print "\nGenre  : $tags->{genre}";
+	print "\nTitle   : $tags->{title}";
+	print "\nArtist  : $tags->{artist}";
+	print "\nAlbum   : $tags->{album}";
+	print "\nAlb Art : $tags->{album_artist}";
+	print "\nGenre   : $tags->{genre}";
 }
-
-=begin comment
-sub compare {
-	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
-	my $dest_tags;
-	
-	my $src_tags = $tags_fn->("$source_dir/$file");
-	if (-e "$dest_dir/$file") {
-		$dest_tags = $tags_fn->("$dest_dir/$file");
-		if (check_tags ($src_tags, $dest_tags)) {
-			print "\nOK : $source_dir/$file";
-			return 0;
-		} else {
-			print "\nFAIL : $source_dir/$file";
-			return 1;
-		}
-	} else {
-		print "\n**ERROR** Unable to find $dest_dir/$file";
-		return 0;
-	}
-}
-=end comment
-=cut
 
 sub compare {
 	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
@@ -96,6 +78,7 @@ sub compare {
 	}
 	my $src_tags = $tags_fn->("$source_dir/$file");
 	my $dest_tags = $tags_fn->("$dest_dir/$file");
+
 	if (check_tags ($src_tags, $dest_tags)) {
 		print "\nOK : $source_dir/$file";
 		return 0;
@@ -115,7 +98,7 @@ my $coderef = sub {
 		for my $file (@files) {
 			my $dest_dir = $source_dir;
 			$dest_dir =~ s/C:\/\/Mine\/Music/F:\/\/Mine/;
-			
+
 			if ($file =~ /\.flac/) {
 				if (compare (\&get_flac_tags, $source_dir, $dest_dir, $file)) {
 					copy ("$source_dir/$file", "$dest_dir/$file");
@@ -156,6 +139,8 @@ sub dir_walk {
 
 #=begin comment
 
+# Check only specified directory
+
 my $src_folder = "C://Mine/Music/Vinyl";
 #my $src_folder = "C://Mine/Music/Bandcamp";
 die "Please supply directory folder or band name" unless @ARGV == 1;
@@ -167,15 +152,78 @@ dir_walk ($coderef, $folder);
 #=end comment
 #=cut
 
+=begin comment
+
+# Check all directories
+
+my @dirs = (
+	{ src => "C:/Mine/Music/Vinyl",	dest => "F:/Mine/Vinyl"	},
+	{ src => "C:/Mine/Music/Bandcamp", dest => "F:/Mine/Bandcamp" },
+);
+for (my $elem = 0; $elem < @dirs; $elem++) {
+	dir_walk ($coderef, $dirs[$elem]->{src});
+}
+
+=end comment
+=cut
+
+=begin comment
+sub get_flac_genre {
+	my $tags = shift;
+	return "" unless defined $tags->{GENRE};
+	my $type = reftype ($tags->{GENRE});
+	if (defined $type && $type eq 'ARRAY') {
+		return join (';', $tags->{GENRE}->@*);
+	} else {
+		return $tags->{GENRE};
+	}
+}
+
+sub get_flac_artist {
+	my $tags = shift;
+	return "" unless defined $tags->{ARTIST};
+	my $type = reftype ($tags->{ARTIST});
+	if (defined $type && $type eq 'ARRAY') {
+		return join (';', $tags->{ARTIST}->@*);
+	} else {
+		return $tags->{ARTIST};
+	}
+}
+
+=end comment
+=cut
+=begin comment
+sub compare {
+	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
+	my $dest_tags;
+	
+	my $src_tags = $tags_fn->("$source_dir/$file");
+	if (-e "$dest_dir/$file") {
+		$dest_tags = $tags_fn->("$dest_dir/$file");
+		if (check_tags ($src_tags, $dest_tags)) {
+			print "\nOK : $source_dir/$file";
+			return 0;
+		} else {
+			print "\nFAIL : $source_dir/$file";
+			return 1;
+		}
+	} else {
+		print "\n**ERROR** Unable to find $dest_dir/$file";
+		return 0;
+	}
+}
+=end comment
+=cut
+
 =pod
 
 =head1 NAME
 
- backup_vinyl.pl
+ backup_tags.pl
 
 =head1 SYNOPSIS
 
- perl backup_vinyl.pl
+ perl backup_tags.pl "directory"
 
 =head1 DESCRIPTION
  
