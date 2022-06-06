@@ -2,6 +2,10 @@
 #	audio_join.pl 15-22/03/18
 #	https://trac.ffmpeg.org/wiki/Concatenate
 
+# To dither from 24 to 16 bit
+# cd C:\Mine\Music\Dime\Haken\Haken - 2022-05-04 - Pool Stage Cruise to the Edge
+# > ffmpeg -i "01 Introduction.flac" -sample_fmt s16 -ar 44100 "01 Intro-16bit.flac"
+
 use strict;
 use warnings;
 

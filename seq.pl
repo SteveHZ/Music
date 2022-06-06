@@ -80,18 +80,21 @@ sub write_cue_file {
 
 =head1 NAME
 
- sequences.pl
+ seq.pl
 
 =head1 SYNOPSIS
 
- perl sequences.pl [episode number]
+ perl seq.pl [episode number]
  OR
- perl sequences.pl
+ perl seq.pl
  Episode number : [episode number]
  
 =head1 DESCRIPTION
 
  Create a cue file from a text file copied from Sequences Soundcloud webpage
+ Ensure that the text file is in the format <Time> <Track info>
+ Once the cue file has been createdm change the attributes of the mp3 file to 'hidden'
+ so that only the cue file shows in Foobar
  
 =head1 AUTHOR
 
