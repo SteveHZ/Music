@@ -13,7 +13,8 @@ use Scalar::Util qw(reftype);
 sub check_tags {
 	my ($src_tags, $dest_tags) = @_;
 
-	return $src_tags->{title} eq $dest_tags->{title}
+	return
+	$src_tags->{title} eq $dest_tags->{title}
 	&& $src_tags->{album} eq $dest_tags->{album}
 	&& $src_tags->{album_artist} eq $dest_tags->{album_artist}
 	&& $src_tags->{artist} eq $dest_tags->{artist}
@@ -151,69 +152,6 @@ dir_walk ($coderef, $folder);
 
 #=end comment
 #=cut
-
-=begin comment
-
-# Check all directories
-
-my @dirs = (
-	{ src => "C:/Mine/Music/Vinyl",	dest => "F:/Mine/Vinyl"	},
-	{ src => "C:/Mine/Music/Bandcamp", dest => "F:/Mine/Bandcamp" },
-);
-for (my $elem = 0; $elem < @dirs; $elem++) {
-	dir_walk ($coderef, $dirs[$elem]->{src});
-}
-
-=end comment
-=cut
-
-=begin comment
-sub get_flac_genre {
-	my $tags = shift;
-	return "" unless defined $tags->{GENRE};
-	my $type = reftype ($tags->{GENRE});
-	if (defined $type && $type eq 'ARRAY') {
-		return join (';', $tags->{GENRE}->@*);
-	} else {
-		return $tags->{GENRE};
-	}
-}
-
-sub get_flac_artist {
-	my $tags = shift;
-	return "" unless defined $tags->{ARTIST};
-	my $type = reftype ($tags->{ARTIST});
-	if (defined $type && $type eq 'ARRAY') {
-		return join (';', $tags->{ARTIST}->@*);
-	} else {
-		return $tags->{ARTIST};
-	}
-}
-
-=end comment
-=cut
-=begin comment
-sub compare {
-	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
-	my $dest_tags;
-	
-	my $src_tags = $tags_fn->("$source_dir/$file");
-	if (-e "$dest_dir/$file") {
-		$dest_tags = $tags_fn->("$dest_dir/$file");
-		if (check_tags ($src_tags, $dest_tags)) {
-			print "\nOK : $source_dir/$file";
-			return 0;
-		} else {
-			print "\nFAIL : $source_dir/$file";
-			return 1;
-		}
-	} else {
-		print "\n**ERROR** Unable to find $dest_dir/$file";
-		return 0;
-	}
-}
-=end comment
-=cut
 
 =pod
 
