@@ -21,7 +21,7 @@ my $lines = read_file "$path/Sequences $episode.txt";
 my @tracks = ();
 
 for my $line (@$lines) {
-	my ($time, $info) = split ' ', $line, 2; # split only once (produce two fields)
+	my ($time, $info) = split ' ', $line, 2; # split only once i.e produce two fields
 #	$info =~ s/\S+$//; # remove website details
 	chomp $info;
 
