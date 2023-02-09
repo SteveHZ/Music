@@ -65,9 +65,9 @@ sub write_cue_file {
 	print $fh "\nTITLE \"$episode\"";
 	print $fh "\nFILE \"$filename\" MP3";
 
-	printf $fh "\n  TRACK %02d AUDIO", ++$filenum;
-	print  $fh "\n    TITLE \"Intro\"";
-	print  $fh "\n    INDEX 01 00:00:00";
+#	printf $fh "\n  TRACK %02d AUDIO", ++$filenum;
+#	print  $fh "\n    TITLE \"Intro\"";
+#	print  $fh "\n    INDEX 01 00:00:00";
 
 	for my $track (@$tracks) {
 		printf $fh "\n  TRACK %02d AUDIO", ++$filenum;
