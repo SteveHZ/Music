@@ -8,7 +8,6 @@ use MP3::Tag;
 use Path::Tiny; # path
 use File::Copy; # copy
 use Scalar::Util qw(reftype);
-#use Data::Dumper;
 
 sub check_tags {
 	my ($src_tags, $dest_tags) = @_;
@@ -60,16 +59,6 @@ sub get_mp3_tags {
 	};
 }
 
-sub print_tags {
-	my $tags = shift;
-
-	print "\nTitle   : $tags->{title}";
-	print "\nArtist  : $tags->{artist}";
-	print "\nAlbum   : $tags->{album}";
-	print "\nAlb Art : $tags->{album_artist}";
-	print "\nGenre   : $tags->{genre}";
-}
-
 sub compare {
 	my ($tags_fn, $source_dir, $dest_dir, $file) = @_;
 	
@@ -84,7 +73,7 @@ sub compare {
 		print "\nOK : $source_dir/$file";
 		return 0;
 	} else {
-		print "\nFAIL : $source_dir/$file";
+		print "\nCOPIED : $source_dir/$file";
 		return 1;
 	}
 }

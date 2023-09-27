@@ -23,7 +23,7 @@ my $path = "c:/mine/music/".$dir;
 chdir $path or die "\nUnable to find folder '$path'";
 
 my $sorted = get_files ($path, $filetype);
-print "\n$_" for @sorted;
+print "\n$_" for @$sorted;
 
 my $info = get_info ();
 
