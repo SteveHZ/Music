@@ -39,9 +39,9 @@ close $fh;
 
 # Write to screen
 
-open my $outh,'>-'; # opens STDOUT
-write_cue_file ($outh, \@sorted);
-close $outh;
+open my $stdout,'>-'; # opens STDOUT
+write_cue_file ($stdout, \@sorted);
+close $stdout;
 print "\n\nCue file completed.\n";
 
 sub write_cue_file {
