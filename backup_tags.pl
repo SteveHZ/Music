@@ -127,10 +127,6 @@ sub dir_walk {
 	}
 }
 
-#=begin comment
-
-# Check only specified directory
-
 my $src_folder = "C://Mine/Music/Vinyl";
 #my $src_folder = "C://Mine/Music/Bandcamp";
 die "Please supply directory folder or band name" unless @ARGV == 1;
@@ -138,9 +134,6 @@ die "Please supply directory folder or band name" unless @ARGV == 1;
 my $dir = $ARGV[0];
 my $folder = "$src_folder/$dir";
 dir_walk ($coderef, $folder);
-
-#=end comment
-#=cut
 
 =pod
 
