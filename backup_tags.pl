@@ -13,11 +13,11 @@ sub check_tags {
 	my ($src_tags, $dest_tags) = @_;
 
 	return
-	$src_tags->{title} eq $dest_tags->{title}
-	&& $src_tags->{album} eq $dest_tags->{album}
-	&& $src_tags->{album_artist} eq $dest_tags->{album_artist}
-	&& $src_tags->{artist} eq $dest_tags->{artist}
-	&& $src_tags->{genre} eq $dest_tags->{genre};
+		$src_tags->{title} eq $dest_tags->{title}
+		&& $src_tags->{album} eq $dest_tags->{album}
+		&& $src_tags->{album_artist} eq $dest_tags->{album_artist}
+		&& $src_tags->{artist} eq $dest_tags->{artist}
+		&& $src_tags->{genre} eq $dest_tags->{genre};
 }
 
 sub get_flac_tag_arrays {
